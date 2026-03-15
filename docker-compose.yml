@@ -1,0 +1,38 @@
+# docker-compose.yml
+services:
+  api-pandas:
+    build: .
+    container_name: benchmark-pandas
+    # Run the Pandas app on a single worker to expose GIL limitations
+    command: uvicorn src.api.app_pandas:app --host 0.0.0.0 --port 8000 --workers 1
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the local data folder into the container
+      - ./data:/app/data
+    environment:
+      # Override the config.py path to match the container's internal path
+      - DATA_PATH=/app/data/raw/financial_options_1M.parquet
+    deploy:
+      resources:
+        limits:
+          # Strictly limit hardware to simulate a constrained microservice
+          cpus: '2.0'
+          memory: 2G
+
+  api-polars:
+    build: .
+    container_name: benchmark-polars
+    # Run the Polars app on a single worker
+    command: uvicorn src.api.app_polars:app --host 0.0.0.0 --port 8001 --workers 1
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATA_PATH=/app/data/raw/financial_options_1M.parquet
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
