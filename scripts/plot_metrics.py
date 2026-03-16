@@ -15,7 +15,7 @@ def load_k6_latency(filepath):
     try:
         with open(filepath, 'r') as f:
             data = json.load(f)
-            m = data['metrics']['http_req_duration']['values']
+            m = data['metrics']['http_req_duration{expected_response:true}']
             return [m['med'], m['p(90)'], m['p(95)'], m['p(99)']]
     except FileNotFoundError:
         print(f"Warning: {filepath} not found.")
@@ -24,19 +24,22 @@ def load_k6_latency(filepath):
         print(f"Warning: Unexpected JSON structure in {filepath}. Error: {e}")
         return [0, 0, 0, 0]
 
-def load_resource_data(filepath):
+def load_resource_data(filepath, engine_name):
     """Safely loads CSV resource data and normalizes the timestamps."""
     try:
         df = pd.read_csv(filepath)
         if df.empty:
             return df
+        
+        df = df[df['container'] == engine_name]
             
         df['timestamp'] = pd.to_datetime(df['timestamp'])
         start_time = df['timestamp'].min()
         df['seconds_elapsed'] = (df['timestamp'] - start_time).dt.total_seconds()
         return df
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(f"Warning: {filepath} not found.")
+        # print(e.message)
         return pd.DataFrame()
 
 def plot_operation_metrics(operation: str):
@@ -47,19 +50,21 @@ def plot_operation_metrics(operation: str):
     print(f"--- Generating Reports for Operation: {operation.upper()} ---")
     
     # Define file paths based on the operation argument
-    base_dir = '../data/reports'
+    base_dir = '../data/reports/'
     os.makedirs(base_dir, exist_ok=True)
     
     json_pd = os.path.join(base_dir, f'pandas_{operation}.json')
     json_pl = os.path.join(base_dir, f'polars_{operation}.json')
     csv_pd = os.path.join(base_dir, f'pandas_{operation}_resources.csv')
     csv_pl = os.path.join(base_dir, f'polars_{operation}_resources.csv')
-
+    print (csv_pd, csv_pl)
     # ==============================================================================
     # 1. PLOT LATENCY (Bar Chart)
     # ==============================================================================
     pandas_stats = load_k6_latency(json_pd)
     polars_stats = load_k6_latency(json_pl)
+
+    print(pandas_stats, polars_stats)
 
     labels = ['p50 (Median)', 'p90', 'p95', 'p99']
     x = np.arange(len(labels))
@@ -89,8 +94,12 @@ def plot_operation_metrics(operation: str):
     # ==============================================================================
     # 2. PLOT RESOURCES (CPU & Memory Line Charts)
     # ==============================================================================
-    df_pd_res = load_resource_data(csv_pd)
-    df_pl_res = load_resource_data(csv_pl)
+    df_pd_res = load_resource_data(csv_pd, "benchmark-pandas")
+    df_pl_res = load_resource_data(csv_pl, "benchmark-polars")
+
+    print(df_pd_res)
+    print(df_pl_res)
+
 
     # Check if either dataframe has data before attempting to plot resources
     if not df_pd_res.empty or not df_pl_res.empty:

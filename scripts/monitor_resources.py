@@ -92,7 +92,7 @@ def run_monitor(duration_seconds: int = 70):
                 csv_file.flush() 
             
             # Pause for 1 second before polling again
-            time.sleep(1)
+            time.sleep(0.5)
             
     print("Monitoring complete. Data saved.")
 

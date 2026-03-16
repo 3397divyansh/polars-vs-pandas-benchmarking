@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 # Adjust these numbers if you want to test larger or smaller loads
 NUM_CUSTOMERS = 100_000
 NUM_PRODUCTS = 10_000
-NUM_ORDERS = 5_000_000  # 5 Million rows is a great stress test
+NUM_ORDERS = 1_000_000  # 5 Million rows is a great stress test
 
 DATA_DIR = os.path.join(os.path.dirname(__name__), "data")
 os.makedirs(DATA_DIR, exist_ok=True)
