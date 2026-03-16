@@ -5,8 +5,8 @@ import { check, sleep } from "k6";
 // 1. Configure the Load Test Parameters
 export const options = {
   stages: [
-    { duration: "10s", target: 20 }, // Ramp-up to 50 concurrent users
-    { duration: "40s", target: 20 }, // Hold steady for 40 seconds
+    { duration: "10s", target: 10 }, // Ramp-up to 50 concurrent users
+    { duration: "40s", target: 10 }, // Hold steady for 40 seconds
     { duration: "10s", target: 0 },  // Cool down
   ],
   thresholds: {

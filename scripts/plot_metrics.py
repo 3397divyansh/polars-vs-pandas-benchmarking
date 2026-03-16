@@ -97,8 +97,6 @@ def plot_operation_metrics(operation: str):
     df_pd_res = load_resource_data(csv_pd, "benchmark-pandas")
     df_pl_res = load_resource_data(csv_pl, "benchmark-polars")
 
-    print(df_pd_res)
-    print(df_pl_res)
 
 
     # Check if either dataframe has data before attempting to plot resources
