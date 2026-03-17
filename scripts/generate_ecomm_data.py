@@ -8,7 +8,9 @@ NUM_CUSTOMERS = 100_000
 NUM_PRODUCTS = 10_000
 NUM_ORDERS = 1_000_000
 
-DATA_DIR = os.path.join(os.path.dirname(__name__), "data")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 np.random.seed(42)
