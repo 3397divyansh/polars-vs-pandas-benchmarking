@@ -1,4 +1,3 @@
-# src/api/app_pandas.py
 from fastapi import FastAPI, HTTPException
 from typing import List
 
@@ -61,8 +60,3 @@ def get_null_imputation():
         return ops_pandas.benchmark_null_imputation()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Pandas processing error: {str(e)}")
-
-# Health check endpoint for Docker container orchestration
-@app.get("/health")
-def health_check():
-    return {"status": "healthy", "engine": "pandas"}
