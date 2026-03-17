@@ -28,7 +28,7 @@
 
 **Required Libraries/Tools** 
 * FastAPI, Uvicorn
-* Pandas, Polars, PyArrow
+* Numpy, Pandas, Polars, PyArrow
 * Matplotlib, Seaborn (for graph generation)
 
 **Input and Expected Output** 
