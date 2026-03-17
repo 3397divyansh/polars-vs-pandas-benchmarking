@@ -2,7 +2,7 @@
 
 echo.
 echo [Step 1 of 3]: Building and Starting Docker Containers...
-docker compose up -d --build
+docker-compose up -d --build
 
 echo.
 echo [Step 2 of 3]: Generating 1-Million-Row E-Commerce Dataset...

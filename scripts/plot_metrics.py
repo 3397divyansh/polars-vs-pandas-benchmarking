@@ -9,6 +9,11 @@ import os
 sns.set_theme(style="whitegrid", context="paper", font_scale=1.2)
 plt.rcParams['savefig.dpi'] = 300 
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+REPORTS_DIR = os.path.join(DATA_DIR, "reports")
+
 def load_k6_latency(filepath):
     try:
         with open(filepath, 'r') as f:
@@ -41,7 +46,7 @@ def load_resource_data(filepath, engine_name):
 def plot_operation_metrics(operation: str):
     print(f"--- Generating Reports for Operation: {operation.upper()} ---")
     
-    base_dir = '../data/reports/'
+    base_dir = REPORTS_DIR
     os.makedirs(base_dir, exist_ok=True)
     
     json_pd = os.path.join(base_dir, f'pandas_{operation}.json')

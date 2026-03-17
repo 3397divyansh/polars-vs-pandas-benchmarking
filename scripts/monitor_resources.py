@@ -7,7 +7,11 @@ from datetime import datetime
 
 engine_name = sys.argv[1].lower() if len(sys.argv) > 1 else "test"
 
-OUTPUT_FILE = f"../data/reports/{engine_name}_resources.csv"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
+REPORTS_DIR = os.path.join(DATA_DIR, "reports")
+OUTPUT_FILE = os.path.join(REPORTS_DIR, f"{engine_name}_resources.csv")
 CONTAINERS = ["benchmark-pandas", "benchmark-polars"]
 
  
