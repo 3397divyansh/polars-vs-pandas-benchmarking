@@ -57,7 +57,7 @@ def plot_operation_metrics(operation: str):
     json_pl = os.path.join(base_dir, f'polars_{operation}.json')
     csv_pd = os.path.join(base_dir, f'pandas_{operation}_resources.csv')
     csv_pl = os.path.join(base_dir, f'polars_{operation}_resources.csv')
-    print (csv_pd, csv_pl)
+    # print (csv_pd, csv_pl)
     # ==============================================================================
     # 1. PLOT LATENCY (Bar Chart)
     # ==============================================================================
