@@ -6,12 +6,10 @@ import numpy as np
 import json
 import os
 
-# Set publication-quality styling
 sns.set_theme(style="whitegrid", context="paper", font_scale=1.2)
 plt.rcParams['savefig.dpi'] = 300 
 
 def load_k6_latency(filepath):
-    """Safely loads and extracts percentiles from a k6 JSON summary."""
     try:
         with open(filepath, 'r') as f:
             data = json.load(f)
@@ -25,7 +23,6 @@ def load_k6_latency(filepath):
         return [0, 0, 0, 0]
 
 def load_resource_data(filepath, engine_name):
-    """Safely loads CSV resource data and normalizes the timestamps."""
     try:
         df = pd.read_csv(filepath)
         if df.empty:
@@ -39,17 +36,11 @@ def load_resource_data(filepath, engine_name):
         return df
     except FileNotFoundError as e:
         print(f"Warning: {filepath} not found.")
-        # print(e.message)
         return pd.DataFrame()
 
 def plot_operation_metrics(operation: str):
-    """
-    Reads the 4 specific files for a given operation and generates 
-    the Latency Bar Chart and the Resource Utilization Line Charts.
-    """
     print(f"--- Generating Reports for Operation: {operation.upper()} ---")
     
-    # Define file paths based on the operation argument
     base_dir = '../data/reports/'
     os.makedirs(base_dir, exist_ok=True)
     
@@ -57,10 +48,8 @@ def plot_operation_metrics(operation: str):
     json_pl = os.path.join(base_dir, f'polars_{operation}.json')
     csv_pd = os.path.join(base_dir, f'pandas_{operation}_resources.csv')
     csv_pl = os.path.join(base_dir, f'polars_{operation}_resources.csv')
-    # print (csv_pd, csv_pl)
-    # ==============================================================================
+
     # 1. PLOT LATENCY (Bar Chart)
-    # ==============================================================================
     pandas_stats = load_k6_latency(json_pd)
     polars_stats = load_k6_latency(json_pl)
 
@@ -81,7 +70,6 @@ def plot_operation_metrics(operation: str):
     ax.set_xticklabels(labels, fontweight='bold')
     ax.legend()
 
-    # Auto-label the bars with their exact values
     ax.bar_label(rects1, padding=3, fmt='%.1f')
     ax.bar_label(rects2, padding=3, fmt='%.1f')
 
@@ -91,21 +79,15 @@ def plot_operation_metrics(operation: str):
     print(f"Saved Latency Chart: {latency_out}")
     plt.close()
 
-    # ==============================================================================
     # 2. PLOT RESOURCES (CPU & Memory Line Charts)
-    # ==============================================================================
     df_pd_res = load_resource_data(csv_pd, "benchmark-pandas")
     df_pl_res = load_resource_data(csv_pl, "benchmark-polars")
 
-
-
-    # Check if either dataframe has data before attempting to plot resources
     if not df_pd_res.empty or not df_pl_res.empty:
         fig2, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
         fig2.suptitle(f'Resource Utilization: {operation.replace("-", " ").title()}', 
                       fontweight='bold', fontsize=14, y=0.98)
 
-        # --- CPU Plot ---
         if not df_pd_res.empty:
             sns.lineplot(data=df_pd_res, x='seconds_elapsed', y='cpu_percent', ax=ax1, label='Pandas CPU %', linewidth=2.5)
         if not df_pl_res.empty:
@@ -115,7 +97,6 @@ def plot_operation_metrics(operation: str):
         ax1.axhline(200, ls='--', color='red', alpha=0.5, label='Max Allocation (2 Cores)')
         ax1.legend(loc='upper right')
 
-        # --- Memory Plot ---
         if not df_pd_res.empty:
             sns.lineplot(data=df_pd_res, x='seconds_elapsed', y='memory_mb', ax=ax2, label='Pandas RAM (MB)', linewidth=2.5)
         if not df_pl_res.empty:
@@ -134,6 +115,5 @@ def plot_operation_metrics(operation: str):
         print(f"Skipping resource charts for '{operation}': No CSV data found.")
 
 if __name__ == "__main__":
-    # Grab the first argument, fallback to heavy-join if none is provided
     operation = sys.argv[1].lower() if len(sys.argv) > 1 else "heavy-join"
     plot_operation_metrics(operation)
